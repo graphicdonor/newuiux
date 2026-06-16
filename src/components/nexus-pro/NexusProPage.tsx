@@ -78,8 +78,14 @@ export default function NexusProPage() {
   const wRef3 = useRef<HTMLDivElement>(null)
   const wRef4 = useRef<HTMLDivElement>(null)
   const wRef5 = useRef<HTMLDivElement>(null)
-  const prodSectionRef = useRef<HTMLElement>(null)
-  const cardRefs     = useRef<(HTMLDivElement | null)[]>([])
+  const prodSectionRef  = useRef<HTMLElement>(null)
+  const cardRefs        = useRef<(HTMLDivElement | null)[]>([])
+  const storyRef        = useRef<HTMLElement>(null)
+  const storyHeadRef    = useRef<HTMLDivElement>(null)
+  const storyCol1Ref    = useRef<HTMLDivElement>(null)
+  const storyCol2Ref    = useRef<HTMLDivElement>(null)
+  const storyStatsRef   = useRef<HTMLDivElement>(null)
+  const storyQuoteRef   = useRef<HTMLQuoteElement>(null)
   const ctaRef       = useRef<HTMLElement>(null)
   const ctaGlowRef   = useRef<HTMLDivElement>(null)
   const ctaTitleRef  = useRef<HTMLHeadingElement>(null)
@@ -241,6 +247,17 @@ export default function NexusProPage() {
         })
       }
 
+      // Our Story entrance
+      const stTl = gsap.timeline({
+        scrollTrigger: { trigger: storyRef.current, start: 'top 72%', once: true },
+      })
+      stTl
+        .fromTo(storyHeadRef.current,  { opacity:0, y:48 }, { opacity:1, y:0, duration:0.75, ease:'power3.out' }, 0)
+        .fromTo(storyCol1Ref.current,  { opacity:0, y:32 }, { opacity:1, y:0, duration:0.65, ease:'power2.out' }, 0.22)
+        .fromTo(storyCol2Ref.current,  { opacity:0, y:32 }, { opacity:1, y:0, duration:0.65, ease:'power2.out' }, 0.35)
+        .fromTo(storyStatsRef.current, { opacity:0, y:24 }, { opacity:1, y:0, duration:0.55, ease:'power2.out' }, 0.50)
+        .fromTo(storyQuoteRef.current, { opacity:0, y:20 }, { opacity:1, y:0, duration:0.50, ease:'power2.out' }, 0.64)
+
       // CTA
       const ctaTl = gsap.timeline({
         scrollTrigger: { trigger:ctaRef.current, pin:true, scrub:1.0, start:'top top', end:'+=120%' },
@@ -303,8 +320,13 @@ export default function NexusProPage() {
 
           {/* Desktop nav */}
           <nav aria-label="Primary" className="hidden items-center gap-7 md:flex">
-            {['Collections','Our Story','Sourcing','Ritual Guide'].map(l => (
-              <a key={l} href="#" className="text-[13px] font-light tracking-wide text-white/55 transition-colors duration-200 hover:text-white/90">{l}</a>
+            {[
+              { label:'Collections',  href:'#' },
+              { label:'Our Story',    href:'#our-story' },
+              { label:'Sourcing',     href:'#' },
+              { label:'Ritual Guide', href:'#' },
+            ].map(({ label, href }) => (
+              <a key={label} href={href} className="text-[13px] font-light tracking-wide text-white/55 transition-colors duration-200 hover:text-white/90">{label}</a>
             ))}
           </nav>
 
@@ -458,6 +480,96 @@ export default function NexusProPage() {
             <div aria-hidden className="flex-shrink-0 w-4 md:w-8" />
           </div>
         </div>
+      </section>
+
+      {/* ══ OUR STORY ═══════════════════════════════════════════════════ */}
+      <section
+        ref={storyRef}
+        id="our-story"
+        className="relative overflow-hidden bg-black px-5 py-20 md:py-28 md:px-12"
+        aria-label="Our Story"
+      >
+        {/* Ambient glow — warm green left */}
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background:'radial-gradient(ellipse at 15% 55%, rgba(138,170,120,0.08) 0%, rgba(200,168,100,0.04) 38%, transparent 65%)' }} />
+
+        {/* Top divider */}
+        <div aria-hidden className="mx-auto mb-14 h-px max-w-xs md:mb-16 md:max-w-sm" style={{ background:'linear-gradient(90deg,transparent,rgba(138,170,120,0.38),transparent)' }} />
+
+        <div className="mx-auto max-w-7xl">
+
+          {/* Label + Headline */}
+          <div ref={storyHeadRef} className="mb-14 md:mb-18" style={{ opacity:0 }}>
+            <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.38em] md:mb-5 md:text-[12px]" style={{ color:'#8aaa78' }}>
+              Our Story · Est. 2024
+            </p>
+            <h2
+              className="font-cinzel font-bold leading-[0.94] tracking-[-0.02em] text-white"
+              style={{ fontSize:'clamp(38px,7vw,88px)' }}
+            >
+              Where Ancient<br />Gardens Meet<br />Modern Craft
+            </h2>
+          </div>
+
+          {/* 2-col story text */}
+          <div className="mb-16 grid gap-8 md:mb-24 md:grid-cols-2 md:gap-16">
+            <div ref={storyCol1Ref} style={{ opacity:0 }}>
+              <p className="text-[15px] font-light leading-[1.9] text-white/45 md:text-[16px]">
+                TeaSanti was born from a single conviction: that exceptional tea, like great wine, carries the soul of its land. We traveled to the oldest gardens in Darjeeling, Yunnan, and the high peaks of Taiwan — not as buyers, but as students. Seasons spent learning altitude, soil, and the patience of a first harvest.
+              </p>
+            </div>
+            <div ref={storyCol2Ref} style={{ opacity:0 }}>
+              <p className="text-[15px] font-light leading-[1.9] text-white/45 md:text-[16px]">
+                Every tea in our collection is sourced directly from master farmers — relationships built over years, not transactions. No blending. No compromise. Only the finest pickings, brought to your ritual exactly as the land intended. One thousand years of craft, delivered with modern care.
+              </p>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div
+            ref={storyStatsRef}
+            className="mb-16 grid grid-cols-3 gap-4 border-t border-white/[0.06] pt-10 md:mb-20 md:gap-10 md:pt-12"
+            style={{ opacity:0 }}
+          >
+            {[
+              { number: '7',      label: 'Partner\nEstates'    },
+              { number: '3',      label: 'Countries\nSourced'  },
+              { number: '1,000+', label: 'Years of\nCraft'     },
+            ].map(stat => (
+              <div key={stat.label} className="text-center">
+                <p
+                  className="font-cinzel font-bold leading-none"
+                  style={{ fontSize:'clamp(26px,5vw,52px)', color:'#c8a96e' }}
+                >
+                  {stat.number}
+                </p>
+                <p className="mt-2 whitespace-pre-line text-[10px] font-medium uppercase tracking-[0.2em] text-white/30 md:text-[11px]">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Pull quote */}
+          <blockquote
+            ref={storyQuoteRef}
+            className="relative border-l-2 pl-7 md:pl-10"
+            style={{ borderColor:'rgba(200,168,100,0.38)', opacity:0 }}
+          >
+            <p
+              className="font-light italic leading-relaxed text-white/50"
+              style={{ fontSize:'clamp(16px,2.2vw,24px)' }}
+            >
+              "In every leaf, a conversation between earth and sky —<br className="hidden md:block" /> a thousand careful hands before yours."
+            </p>
+            <cite className="mt-4 block text-[10px] not-italic uppercase tracking-[0.28em] text-white/25 md:mt-5 md:text-[11px]">
+              — The Teasanti Founders
+            </cite>
+          </blockquote>
+
+        </div>
+
+        {/* Bottom divider */}
+        <div aria-hidden className="mx-auto mt-16 h-px max-w-xs md:mt-20 md:max-w-sm" style={{ background:'linear-gradient(90deg,transparent,rgba(200,168,100,0.28),transparent)' }} />
       </section>
 
       {/* ══ BRAND IDENTITY ══════════════════════════════════════════════ */}
