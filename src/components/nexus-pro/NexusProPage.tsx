@@ -488,15 +488,15 @@ export default function NexusProPage() {
         </div>
       </section>
 
-      {/* ══ PRODUCT GRID ════════════════════════════════════════════════ */}
-      <section ref={prodSectionRef} className="relative bg-black px-5 pb-20 pt-20 md:px-12 md:py-28" aria-label="Our Tea Collection">
+      {/* ══ PRODUCT STRIP ═══════════════════════════════════════════════ */}
+      <section ref={prodSectionRef} className="relative bg-black pb-20 pt-20 md:py-28" aria-label="Our Tea Collection">
 
         {/* Section header */}
-        <div className="mx-auto mb-10 max-w-7xl md:mb-16">
+        <div className="mx-auto mb-10 max-w-7xl px-5 md:mb-14 md:px-12">
           <p className="mb-2.5 text-[11px] font-medium uppercase tracking-[0.3em] md:text-[12px]" style={{ color:'#c8a96e' }}>
-            Handpicked · Rare · Seasonal
+            Naturally Soothing · Premium Blends
           </p>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="font-cinzel font-bold leading-none tracking-[-0.01em] text-white" style={{ fontSize:'clamp(28px,5vw,58px)' }}>
                 The Collection
@@ -505,41 +505,29 @@ export default function NexusProPage() {
                 Sourced from the world&rsquo;s finest gardens. Every tea tells a story of place, season, and craft.
               </p>
             </div>
-
-            {/* Category filter — scrollable on mobile */}
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none sm:flex-wrap sm:overflow-visible sm:pb-0">
-              {['All','White Tea','Green Tea','Oolong','Pu-erh'].map((cat, i) => (
-                <button
-                  key={cat}
-                  className="flex-shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em] transition-all duration-200"
-                  style={{
-                    background: i===0 ? 'rgba(200,168,100,0.14)' : 'rgba(255,255,255,0.04)',
-                    color      : i===0 ? '#c8a96e'               : 'rgba(255,255,255,0.38)',
-                    border     : i===0 ? '1px solid rgba(200,168,100,0.30)' : '1px solid rgba(255,255,255,0.08)',
-                  }}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+            <a href="#" className="flex-shrink-0 self-start sm:self-auto min-h-[40px] flex items-center rounded-full border border-white/[0.14] px-6 text-[12px] font-medium text-white/50 transition-all duration-200 hover:border-white/28 hover:text-white/90">
+              View All →
+            </a>
           </div>
-
           <div className="mt-7 h-px w-full md:mt-8" style={{ background:'linear-gradient(90deg,rgba(200,168,100,0.20),rgba(138,170,120,0.12),transparent)' }} />
         </div>
 
-        {/* Grid */}
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
-          {PRODUCTS.map((p, i) => (
-            <div key={p.id} ref={el => { cardRefs.current[i] = el }} style={{ opacity:0 }}>
-              <ProductCard product={p} />
-            </div>
-          ))}
-        </div>
+        {/* Horizontal scroll strip */}
+        <div className="relative">
+          {/* Right fade edge */}
+          <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 md:w-24" style={{ background:'linear-gradient(to left,rgba(0,0,0,0.90),transparent)' }} />
 
-        <div className="mx-auto mt-12 flex max-w-7xl justify-center md:mt-14">
-          <a href="#" className="min-h-[44px] rounded-full border border-white/[0.14] px-7 py-3 text-[13px] font-medium text-white/55 transition-all duration-200 hover:border-white/28 hover:text-white/90 flex items-center">
-            View Full Collection →
-          </a>
+          <div
+            className="flex gap-5 overflow-x-auto px-5 pb-6 pt-2 scrollbar-none snap-x snap-mandatory md:px-12"
+          >
+            {PRODUCTS.map((p, i) => (
+              <div key={p.id} ref={el => { cardRefs.current[i] = el }} className="snap-start flex-shrink-0" style={{ opacity:0 }}>
+                <ProductCard product={p} />
+              </div>
+            ))}
+            {/* Trailing spacer so last card clears fade edge */}
+            <div aria-hidden className="flex-shrink-0 w-4 md:w-8" />
+          </div>
         </div>
       </section>
 
