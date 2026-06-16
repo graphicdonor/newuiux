@@ -50,113 +50,6 @@ const IconMenu = () => (
   </svg>
 )
 
-// ─── Ritual steps ───────────────────────────────────────────────────────────
-const RITUAL_STEPS = [
-  {
-    num: 1,
-    title: 'Prepare\nYour Space',
-    optional: false,
-    badge: null as { top: string; bot: string } | null,
-    desc: 'Find a quiet spot. Put away distractions for a few minutes. Take a few slow breaths.',
-    bullets: null as string[] | null,
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-        <path d="M10 44 Q10 52 20 52 H44 Q54 52 54 44 V38 H10 Z"/>
-        <path d="M20 38 V24 Q20 16 32 16 Q44 16 44 24 V38"/>
-        <path d="M54 41 Q60 39 60 34 Q60 29 54 38"/>
-        <path d="M28 16 Q28 10 32 8 Q36 10 36 16"/>
-        <ellipse cx="32" cy="9" rx="3" ry="2.5"/>
-      </svg>
-    ),
-  },
-  {
-    num: 2,
-    title: 'Heat\nthe Water',
-    optional: false,
-    badge: { top: '70–80°C', bot: '(160–175°F)' },
-    desc: 'Use water around 70–80°C (160–175°F). Avoid boiling water, which can make green tea bitter.',
-    bullets: null,
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-        <path d="M16 48 Q16 56 32 56 Q48 56 48 48 V22 Q48 14 32 14 Q16 14 16 22 Z"/>
-        <path d="M48 30 Q56 28 56 36 Q56 44 48 42"/>
-        <path d="M32 14 L32 8"/>
-        <path d="M24 11 Q28 6 32 8 Q36 6 40 11"/>
-        <rect x="29" y="26" width="6" height="14" rx="3" strokeWidth="1.2"/>
-        <path d="M32 40 L32 44" strokeWidth="2"/>
-      </svg>
-    ),
-  },
-  {
-    num: 3,
-    title: 'Steep\nthe Tea',
-    optional: false,
-    badge: { top: '1–3', bot: 'MIN' },
-    desc: 'Add 1 teaspoon (about 2–3 g) of green tea leaves per cup. Steep for 1–3 minutes depending on the variety and your taste.',
-    bullets: null,
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-        <ellipse cx="32" cy="42" rx="22" ry="10"/>
-        <path d="M10 42 Q10 54 32 54 Q54 54 54 42"/>
-        <path d="M22 36 Q20 28 26 24 Q28 22 30 26"/>
-        <path d="M30 32 Q29 25 34 21 Q37 19 37 24"/>
-        <path d="M38 36 Q37 28 42 24 Q44 22 43 27"/>
-      </svg>
-    ),
-  },
-  {
-    num: 4,
-    title: 'Pause Before\nDrinking',
-    optional: false,
-    badge: null,
-    desc: 'Notice the aroma. Observe the color of the tea. Take a moment to appreciate the process.',
-    bullets: null,
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-        <ellipse cx="32" cy="44" rx="20" ry="8"/>
-        <path d="M12 44 Q12 54 32 54 Q52 54 52 44"/>
-        <path d="M24 14 Q24 8 32 8 Q40 8 40 14 Q40 20 32 22 Q24 20 24 14Z"/>
-        <path d="M26 38 Q24 32 26 28"/>
-        <path d="M32 38 Q31 30 32 26"/>
-        <path d="M38 38 Q40 32 38 28"/>
-      </svg>
-    ),
-  },
-  {
-    num: 5,
-    title: 'Drink\nMindfully',
-    optional: false,
-    badge: null,
-    desc: 'Sip slowly. Focus on the warmth, flavor, and sensation. Let your attention rest on the present moment.',
-    bullets: null,
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-        <ellipse cx="32" cy="44" rx="20" ry="8"/>
-        <path d="M12 44 Q12 54 32 54 Q52 54 52 44"/>
-        <path d="M20 28 Q20 36 32 40 Q44 36 44 28 Q44 20 32 20 Q20 20 20 28"/>
-        <path d="M18 28 Q16 18 18 14"/>
-        <path d="M46 28 Q48 18 46 14"/>
-        <path d="M24 18 Q26 10 32 8 Q38 10 40 18"/>
-      </svg>
-    ),
-  },
-  {
-    num: 6,
-    title: 'Set an\nIntention',
-    optional: true,
-    badge: null,
-    desc: 'While drinking, reflect on:',
-    bullets: ['One thing you\'re grateful for.', 'A goal for the day.', 'A quality you\'d like to cultivate (patience, focus, calm, etc.).'],
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-        <path d="M32 56 Q32 40 20 28 Q14 22 16 12 Q24 8 32 14 Q40 8 48 12 Q50 22 44 28 Q32 40 32 56Z"/>
-        <path d="M32 40 Q26 32 28 22"/>
-        <path d="M32 40 Q38 32 36 22"/>
-      </svg>
-    ),
-  },
-] as const
-
 // ─── Scroll word sequence ────────────────────────────────────────────────────
 const SCROLL_WORDS = [
   { word: 'PURE.',      sub: 'First harvest, unblended',     accent: '#c8a96e' },
@@ -372,10 +265,10 @@ export default function NexusProPage() {
       gsap.fromTo(ritualHeadRef.current,
         { opacity:0, y:40 }, { opacity:1, y:0, duration:0.7, ease:'power3.out',
           scrollTrigger: { trigger: ritualRef.current, start:'top 75%', once:true } })
-      const ritualCards = ritualCardRefs.current.filter(Boolean)
-      if (ritualCards.length) {
-        gsap.fromTo(ritualCards, { opacity:0, y:36 }, {
-          opacity:1, y:0, stagger:0.09, duration:0.6, ease:'power2.out',
+      const ritualImg = ritualCardRefs.current[0]
+      if (ritualImg) {
+        gsap.fromTo(ritualImg, { opacity:0, y:30 }, {
+          opacity:1, y:0, duration:0.8, ease:'power2.out',
           scrollTrigger: { trigger: ritualRef.current, start:'top 68%', once:true },
         })
       }
@@ -764,80 +657,18 @@ export default function NexusProPage() {
           </p>
         </div>
 
-        {/* Steps grid */}
-        <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-6 lg:gap-x-8">
-            {RITUAL_STEPS.map((step, i) => (
-              <div
-                key={step.num}
-                ref={el => { ritualCardRefs.current[i] = el }}
-                className="flex flex-col"
-                style={{ opacity:0 }}
-              >
-                {/* Visual area */}
-                <div
-                  className="relative mb-4 flex h-[140px] items-center justify-center overflow-hidden rounded-2xl"
-                  style={{ background:'linear-gradient(160deg,rgba(20,18,10,0.9) 0%,rgba(6,5,2,1) 100%)', border:'1px solid rgba(255,255,255,0.06)' }}
-                >
-                  {/* Step number badge */}
-                  <div
-                    className="absolute left-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-[12px] font-semibold text-black"
-                    style={{ background:'#8aaa78' }}
-                  >
-                    {step.num}
-                  </div>
-
-                  {/* Badge overlay (temp / time) */}
-                  {step.badge && (
-                    <div className="absolute right-3 top-3 text-right leading-tight">
-                      <p className="font-cinzel text-[11px] font-bold" style={{ color:'#c8a96e' }}>{step.badge.top}</p>
-                      <p className="text-[9px] font-light text-white/45">{step.badge.bot}</p>
-                    </div>
-                  )}
-
-                  {/* Optional badge */}
-                  {step.optional && (
-                    <p className="absolute right-3 top-3 text-[9px] font-medium uppercase tracking-[0.18em]" style={{ color:'#8aaa78' }}>
-                      Optional
-                    </p>
-                  )}
-
-                  {/* Icon */}
-                  <div className="h-16 w-16 text-white/30" style={{ color:'rgba(138,170,120,0.55)' }}>
-                    {step.icon}
-                  </div>
-                </div>
-
-                {/* Title */}
-                <h3
-                  className="mb-2 whitespace-pre-line font-light italic leading-[1.25] text-white"
-                  style={{ fontSize:'clamp(15px,1.6vw,19px)', fontFamily:'Georgia, serif' }}
-                >
-                  {step.title}
-                </h3>
-
-                {/* Green rule */}
-                <div className="mb-3 h-px w-10" style={{ background:'linear-gradient(90deg,#8aaa78,transparent)' }} />
-
-                {/* Description */}
-                <p className="text-[12px] font-light leading-[1.75] text-white/40 md:text-[13px]">
-                  {step.desc}
-                </p>
-
-                {/* Bullet list (step 6) */}
-                {step.bullets && (
-                  <ul className="mt-2 space-y-1.5">
-                    {step.bullets.map(b => (
-                      <li key={b} className="flex items-start gap-2 text-[12px] font-light leading-[1.6] text-white/38">
-                        <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background:'#8aaa78' }} />
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
+        {/* Ritual image */}
+        <div
+          ref={el => { ritualCardRefs.current[0] = el }}
+          className="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl"
+          style={{ opacity:0, border:'1px solid rgba(255,255,255,0.06)' }}
+        >
+          <img
+            src="/ritual-guide.png"
+            alt="6-step tea ritual guide: Prepare Your Space, Heat the Water, Steep the Tea, Pause Before Drinking, Drink Mindfully, Set an Intention"
+            className="w-full h-auto block"
+            loading="lazy"
+          />
         </div>
 
         {/* Bottom divider */}
