@@ -50,6 +50,16 @@ const IconMenu = () => (
   </svg>
 )
 
+// ─── Scroll word sequence ────────────────────────────────────────────────────
+const SCROLL_WORDS = [
+  { word: 'PURE.',      sub: 'First harvest, unblended',     accent: '#c8a96e' },
+  { word: 'NATURAL.',   sub: 'Grown without compromise',     accent: '#8aaa78' },
+  { word: 'CALM.',      sub: 'A moment in every cup',        accent: '#b8d4a0' },
+  { word: 'FRESH.',     sub: 'Picked at peak season',        accent: '#7dbb7d' },
+  { word: 'RARE.',      sub: 'Sourced from ancient gardens', accent: '#d4c8a0' },
+  { word: 'TIMELESS.',  sub: 'One thousand years of craft',  accent: '#c8c0b0' },
+]
+
 // ─── Component ──────────────────────────────────────────────────────────────
 export default function NexusProPage() {
   const [loadPct, setLoadPct] = useState(0)
@@ -62,12 +72,7 @@ export default function NexusProPage() {
   const mobileNavRef = useRef<HTMLDivElement>(null)
   const pinRef       = useRef<HTMLElement>(null)
   const videoRef     = useRef<HTMLVideoElement>(null)
-  const w2LeftRef    = useRef<HTMLDivElement>(null)
-  const w2RightRef   = useRef<HTMLDivElement>(null)
-  const w3LeftRef    = useRef<HTMLDivElement>(null)
-  const w3RightRef   = useRef<HTMLDivElement>(null)
-  const w4LeftRef    = useRef<HTMLDivElement>(null)
-  const w4RightRef   = useRef<HTMLDivElement>(null)
+  const wordRefs     = useRef<(HTMLDivElement | null)[]>([])
   const prodSectionRef = useRef<HTMLElement>(null)
   const cardRefs     = useRef<(HTMLDivElement | null)[]>([])
   const ctaRef       = useRef<HTMLElement>(null)
@@ -191,34 +196,19 @@ export default function NexusProPage() {
         scrollTrigger: { trigger: pinRef.current, scrub: 1.0, start: 'top top', end: '+=600%' },
       })
 
-      // Phase 2: PURE / RARE — x on desktop, y on mobile
-        .fromTo(w2LeftRef.current,
-          { opacity:0, x: isMobile ? 0 : -80, y: isMobile ? -28 : 0, scale:0.88 },
-          { opacity:1, x:0, y:0, scale:1, duration:0.20, ease:'power3.out' }, 0.26)
-        .fromTo(w2RightRef.current,
-          { opacity:0, x: isMobile ? 0 : 80, y: isMobile ? 28 : 0, scale:0.88 },
-          { opacity:1, x:0, y:0, scale:1, duration:0.20, ease:'power3.out' }, 0.28)
-        .to(w2LeftRef.current,
-          { opacity:0, x: isMobile ? 0 : -38, y: isMobile ? -18 : 0, duration:0.14, ease:'power2.in' }, 0.42)
-        .to(w2RightRef.current,
-          { opacity:0, x: isMobile ? 0 : 38,  y: isMobile ? 18 : 0,  duration:0.14, ease:'power2.in' }, 0.42)
-
-      // Phase 3: Quotes
-        .fromTo(w3LeftRef.current,
-          { opacity:0, y:24 }, { opacity:1, y:0, duration:0.18, ease:'power2.out' }, 0.48)
-        .fromTo(w3RightRef.current,
-          { opacity:0, y:24 }, { opacity:1, y:0, duration:0.18, ease:'power2.out' }, 0.50)
-        .to([w3LeftRef.current, w3RightRef.current],
-          { opacity:0, y:-14, duration:0.14, ease:'power2.in' }, 0.63)
-
-      // Phase 4: Slogans
-        .fromTo(w4LeftRef.current,
-          { opacity:0, y:28, scale:0.95 }, { opacity:1, y:0, scale:1, duration:0.20, ease:'power3.out' }, 0.68)
-        .fromTo(w4RightRef.current,
-          { opacity:0, y:28, scale:0.95 }, { opacity:1, y:0, scale:1, duration:0.20, ease:'power3.out' }, 0.70)
-        .to([w4LeftRef.current, w4RightRef.current],
-          { opacity:0, duration:0.16, ease:'power1.in' }, 0.84)
-        .to({}, { duration:0.16 }, 0.84)
+      // Sequential left-side words — 6 words evenly across full scroll
+      SCROLL_WORDS.forEach((_, i) => {
+        const appear = 0.02 + i * 0.16
+        const disappear = appear + 0.10
+        tl
+          .fromTo(wordRefs.current[i],
+            { opacity:0, x: isMobile ? 0 : -55, y: isMobile ? -22 : 0 },
+            { opacity:1, x:0, y:0, duration:0.09, ease:'power3.out' },
+            appear)
+          .to(wordRefs.current[i],
+            { opacity:0, x: isMobile ? 0 : -22, y: isMobile ? 22 : 0, duration:0.07, ease:'power2.in' },
+            disappear)
+      })
 
       // Product grid entrance
       if (cardRefs.current.length) {
@@ -363,95 +353,35 @@ export default function NexusProPage() {
           <p className="font-cinzel text-[10px] uppercase tracking-[0.28em] text-white/15 md:text-[11px]">Teasanti</p>
         </div>
 
-        {/* ── Phase 2: PURE / RARE ──
-             Mobile: top 30% and bottom 30%, centered
-             Desktop: left side and right side, vertically centered */}
-        <div
-          ref={w2LeftRef}
-          className="pointer-events-none absolute opacity-0
-            left-0 right-0 top-[28%] px-5 text-center
-            md:left-[6vw] md:right-auto md:top-1/2 md:px-0 md:text-left md:-translate-y-1/2"
-          style={{ zIndex:20, willChange:'transform,opacity' }}
-          aria-hidden
-        >
-          <p className="font-cinzel font-bold leading-none text-white" style={{ fontSize:'clamp(42px,10vw,96px)', textShadow:'0 2px 30px rgba(0,0,0,0.7)' }}>
-            PURE.
-          </p>
-          <div className="mt-2.5 h-px w-14 rounded-full md:w-16" style={{ background:'rgba(200,168,100,0.45)', margin:'10px auto 0' }} />
-        </div>
-        <div
-          ref={w2RightRef}
-          className="pointer-events-none absolute opacity-0
-            bottom-[26%] left-0 right-0 px-5 text-center
-            md:bottom-auto md:right-[6vw] md:left-auto md:top-1/2 md:px-0 md:text-right md:-translate-y-1/2"
-          style={{ zIndex:20, willChange:'transform,opacity' }}
-          aria-hidden
-        >
-          <p className="font-cinzel font-bold leading-none text-white" style={{ fontSize:'clamp(42px,10vw,96px)', textShadow:'0 2px 30px rgba(0,0,0,0.7)' }}>
-            RARE.
-          </p>
-          <div className="mt-2.5 h-px w-14 rounded-full md:ml-auto md:w-16" style={{ background:'rgba(138,170,120,0.45)', margin:'10px auto 0' }} />
-        </div>
-
-        {/* ── Phase 3: Quotes ──
-             Mobile: top 22% / bottom 18%, centered
-             Desktop: left/right, vertically centered */}
-        <div
-          ref={w3LeftRef}
-          className="pointer-events-none absolute opacity-0
-            left-0 right-0 top-[20%] px-6 text-center
-            md:left-[6vw] md:right-auto md:top-1/2 md:max-w-[260px] md:px-0 md:text-left md:-translate-y-1/2"
-          style={{ zIndex:20, willChange:'transform,opacity' }}
-          aria-hidden
-        >
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.3em]" style={{ color:'#c8a96e' }}>Origin</p>
-          <p className="font-light leading-[1.35] text-white/90" style={{ fontSize:'clamp(16px,2.4vw,30px)', textShadow:'0 2px 22px rgba(0,0,0,0.85)' }}>
-            Grown at altitude,<br />where silence<br />speaks first.
-          </p>
-        </div>
-        <div
-          ref={w3RightRef}
-          className="pointer-events-none absolute opacity-0
-            bottom-[16%] left-0 right-0 px-6 text-center
-            md:bottom-auto md:right-[6vw] md:left-auto md:top-1/2 md:max-w-[260px] md:px-0 md:text-right md:-translate-y-1/2"
-          style={{ zIndex:20, willChange:'transform,opacity' }}
-          aria-hidden
-        >
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.3em]" style={{ color:'#8aaa78' }}>Craft</p>
-          <p className="font-light leading-[1.35] text-white/90" style={{ fontSize:'clamp(16px,2.4vw,30px)', textShadow:'0 2px 22px rgba(0,0,0,0.85)' }}>
-            One thousand<br />hands shape<br />every cup.
-          </p>
-        </div>
-
-        {/* ── Phase 4: Slogans ──
-             Mobile: top 30% / bottom 28%, centered
-             Desktop: left/right, vertically centered */}
-        <div
-          ref={w4LeftRef}
-          className="pointer-events-none absolute opacity-0
-            left-0 right-0 top-[28%] px-6 text-center
-            md:left-[6vw] md:right-auto md:top-1/2 md:max-w-[280px] md:px-0 md:text-left md:-translate-y-1/2"
-          style={{ zIndex:20, willChange:'transform,opacity' }}
-          aria-hidden
-        >
-          <p className="font-semibold leading-[1.25] text-white" style={{ fontSize:'clamp(20px,3.5vw,40px)', textShadow:'0 3px 28px rgba(0,0,0,0.8)' }}>
-            Ancient gardens.<br />Modern ritual.
-          </p>
-          <div className="mt-3 h-px w-16 rounded-full md:w-20" style={{ background:'rgba(200,168,100,0.50)', margin:'12px auto 0' }} />
-        </div>
-        <div
-          ref={w4RightRef}
-          className="pointer-events-none absolute opacity-0
-            bottom-[24%] left-0 right-0 px-6 text-center
-            md:bottom-auto md:right-[6vw] md:left-auto md:top-1/2 md:max-w-[280px] md:px-0 md:text-right md:-translate-y-1/2"
-          style={{ zIndex:20, willChange:'transform,opacity' }}
-          aria-hidden
-        >
-          <p className="font-semibold leading-[1.25] text-white" style={{ fontSize:'clamp(20px,3.5vw,40px)', textShadow:'0 3px 28px rgba(0,0,0,0.8)' }}>
-            From soil<br />to soul.
-          </p>
-          <div className="mt-3 h-px w-16 rounded-full md:ml-auto md:w-20" style={{ background:'rgba(138,170,120,0.50)', margin:'12px auto 0' }} />
-        </div>
+        {/* ── Sequential left-side words (appear one by one on scroll) ── */}
+        {SCROLL_WORDS.map((item, i) => (
+          <div
+            key={item.word}
+            ref={el => { wordRefs.current[i] = el }}
+            className="pointer-events-none absolute opacity-0
+              left-0 right-0 top-1/2 -translate-y-1/2 px-6 text-center
+              md:left-[6vw] md:right-auto md:px-0 md:text-left"
+            style={{ zIndex:20, willChange:'transform,opacity' }}
+            aria-hidden
+          >
+            <p
+              className="font-cinzel font-bold leading-none text-white"
+              style={{ fontSize:'clamp(44px,10vw,100px)', textShadow:'0 2px 40px rgba(0,0,0,0.6)' }}
+            >
+              {item.word}
+            </p>
+            <p
+              className="mt-2 text-[11px] font-light uppercase tracking-[0.26em] md:text-[12px]"
+              style={{ color: `${item.accent}bb` }}
+            >
+              {item.sub}
+            </p>
+            <div
+              className="mt-3 h-px w-14 rounded-full md:w-16"
+              style={{ background: `${item.accent}44`, margin:'10px auto 0', marginLeft: undefined }}
+            />
+          </div>
+        ))}
 
         {/* Scroll indicator */}
         <div aria-hidden className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5" style={{ zIndex:40 }}>
