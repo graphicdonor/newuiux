@@ -196,25 +196,27 @@ export default function NexusProPage() {
 
       if (prefersReduced) return
 
-      // Overlay timeline
+      // Overlay timeline — instant scrub so words match scroll position exactly
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: pinRef.current, scrub: 1.0, start: 'top top', end: '+=600%' },
+        scrollTrigger: { trigger: pinRef.current, scrub: true, start: 'top top', end: '+=600%' },
       })
 
-      // Sequential left-side words — 6 words evenly across full scroll
+      // 6 words, each owns 1/6 of the timeline (0.167s slot)
+      // Layout per slot: 0.04 fade-in | 0.09 hold | 0.04 fade-out = 0.17
+      const SLOT = 0.167
       const wordElems = [wRef0,wRef1,wRef2,wRef3,wRef4,wRef5].map(r => r.current)
       wordElems.forEach((el, i) => {
         if (!el) return
-        const appear    = 0.02 + i * 0.16
-        const disappear = appear + 0.10
+        const slotStart = i * SLOT
+        const fadeOut   = slotStart + SLOT - 0.04   // start fade-out 0.04s before slot ends
         tl
           .fromTo(el,
-            { opacity:0, x: isMobile ? 0 : -55, y: isMobile ? -22 : 0 },
-            { opacity:1, x:0, y:0, duration:0.09, ease:'power3.out' },
-            appear)
+            { opacity:0, x: isMobile ? 0 : -36, y: isMobile ? -12 : 0 },
+            { opacity:1, x:0, y:0, duration:0.04, ease:'power2.out' },
+            slotStart)
           .to(el,
-            { opacity:0, x: isMobile ? 0 : -22, y: isMobile ? 22 : 0, duration:0.07, ease:'power2.in' },
-            disappear)
+            { opacity:0, x: isMobile ? 0 : -14, y: isMobile ? 12 : 0, duration:0.04, ease:'power2.in' },
+            fadeOut)
       })
 
       // Product grid entrance
@@ -375,7 +377,7 @@ export default function NexusProPage() {
             >
               <p
                 className="font-cinzel font-bold leading-none text-white"
-                style={{ fontSize:'clamp(44px,10vw,100px)', textShadow:'0 2px 40px rgba(0,0,0,0.6)' }}
+                style={{ fontSize:'clamp(22px,4vw,42px)', textShadow:'0 2px 24px rgba(0,0,0,0.7)' }}
               >
                 {item.word}
               </p>
