@@ -145,10 +145,10 @@ export default function NexusProPage() {
       const el = headerRef.current
       if (!el) return
       const frosted = window.scrollY > 50
-      el.style.background         = frosted ? 'rgba(4,3,1,0.82)' : 'transparent'
-      el.style.backdropFilter     = frosted ? 'blur(24px)' : 'none'
-      ;(el.style as CSSStyleDeclaration & { WebkitBackdropFilter: string }).WebkitBackdropFilter = frosted ? 'blur(24px)' : 'none'
-      el.style.borderBottom       = frosted ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent'
+      el.style.background         = frosted ? 'rgba(4,3,1,0.38)' : 'transparent'
+      el.style.backdropFilter     = frosted ? 'blur(18px) saturate(160%)' : 'none'
+      ;(el.style as CSSStyleDeclaration & { WebkitBackdropFilter: string }).WebkitBackdropFilter = frosted ? 'blur(18px) saturate(160%)' : 'none'
+      el.style.borderBottom       = frosted ? '1px solid rgba(255,255,255,0.07)' : '1px solid transparent'
     }
     window.addEventListener('scroll', onScroll, { passive: true })
 
