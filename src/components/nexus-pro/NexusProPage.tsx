@@ -491,24 +491,22 @@ export default function NexusProPage() {
       <section ref={prodSectionRef} className="relative bg-black pb-20 pt-20 md:py-28" aria-label="Our Tea Collection">
 
         {/* Section header */}
-        <div className="mx-auto mb-10 max-w-7xl px-5 md:mb-14 md:px-12">
+        <div className="mx-auto mb-10 max-w-7xl px-5 text-center md:mb-14 md:px-12">
           <p className="mb-2.5 text-[11px] font-medium uppercase tracking-[0.3em] md:text-[12px]" style={{ color:'#c8a96e' }}>
             Naturally Soothing · Premium Blends
           </p>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="font-cinzel font-bold leading-none tracking-[-0.01em] text-white" style={{ fontSize:'clamp(28px,5vw,58px)' }}>
-                The Collection
-              </h2>
-              <p className="mt-2.5 max-w-sm text-[14px] font-light leading-relaxed text-white/38 md:max-w-md md:text-[15px]">
-                Sourced from the world&rsquo;s finest gardens. Every tea tells a story of place, season, and craft.
-              </p>
-            </div>
-            <a href="#" className="flex-shrink-0 self-start sm:self-auto min-h-[40px] flex items-center rounded-full border border-white/[0.14] px-6 text-[12px] font-medium text-white/50 transition-all duration-200 hover:border-white/28 hover:text-white/90">
+          <h2 className="font-cinzel font-bold leading-none tracking-[-0.01em] text-white" style={{ fontSize:'clamp(28px,5vw,58px)' }}>
+            The Collection
+          </h2>
+          <p className="mx-auto mt-2.5 max-w-md text-[14px] font-light leading-relaxed text-white/38 md:text-[15px]">
+            Sourced from the world&rsquo;s finest gardens. Every tea tells a story of place, season, and craft.
+          </p>
+          <div className="mt-5 flex justify-center">
+            <a href="#" className="min-h-[40px] flex items-center rounded-full border border-white/[0.14] px-6 text-[12px] font-medium text-white/50 transition-all duration-200 hover:border-white/28 hover:text-white/90">
               View All →
             </a>
           </div>
-          <div className="mt-7 h-px w-full md:mt-8" style={{ background:'linear-gradient(90deg,rgba(200,168,100,0.20),rgba(138,170,120,0.12),transparent)' }} />
+          <div className="mt-7 h-px w-full md:mt-8" style={{ background:'linear-gradient(90deg,transparent,rgba(200,168,100,0.20),rgba(138,170,120,0.12),transparent)' }} />
         </div>
 
         {/* Horizontal scroll strip */}
