@@ -351,14 +351,15 @@ export default function NexusProPage() {
       </header>
 
       {/* ══ PINNED VIDEO SECTION ════════════════════════════════════════ */}
-      <section ref={pinRef} className="relative h-[100dvh] w-full overflow-hidden bg-black" aria-label="Teasanti — scroll to explore">
+      {/* z-index scale: video=1 | grain=2 | watermark=5 | words=50 | scroll-dot=60 */}
+      <section ref={pinRef} className="relative h-[100dvh] w-full overflow-hidden bg-black" style={{ isolation:'isolate' }} aria-label="Teasanti — scroll to explore">
 
         <video ref={videoRef} muted playsInline preload="none" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full object-cover" style={{ zIndex:1 }} />
 
-        <div aria-hidden className="grain pointer-events-none absolute inset-0 opacity-[0.022]" style={{ zIndex:3 }} />
+        <div aria-hidden className="grain pointer-events-none absolute inset-0 opacity-[0.022]" style={{ zIndex:2 }} />
 
         {/* Brand watermark */}
-        <div aria-hidden className="pointer-events-none absolute bottom-20 left-5 z-10 md:bottom-8 md:left-8" style={{ zIndex:15 }}>
+        <div aria-hidden className="pointer-events-none absolute bottom-20 left-5 md:bottom-8 md:left-8" style={{ zIndex:5 }}>
           <p className="font-cinzel text-[10px] uppercase tracking-[0.28em] text-white/15 md:text-[11px]">Teasanti</p>
         </div>
 
@@ -372,31 +373,31 @@ export default function NexusProPage() {
               className="pointer-events-none absolute
                 left-0 right-0 top-1/2 -translate-y-1/2 px-6 text-center
                 md:left-[6vw] md:right-auto md:px-0 md:text-left"
-              style={{ zIndex:20, willChange:'transform,opacity', opacity:0 }}
+              style={{ zIndex:50, opacity:0 }}
               aria-hidden
             >
               <p
                 className="font-cinzel font-bold leading-none text-white"
-                style={{ fontSize:'clamp(22px,4vw,42px)', textShadow:'0 2px 24px rgba(0,0,0,0.7)' }}
+                style={{ fontSize:'clamp(22px,4vw,42px)', textShadow:'0 2px 24px rgba(0,0,0,0.5)' }}
               >
                 {item.word}
               </p>
               <p
                 className="mt-2 text-[11px] font-light uppercase tracking-[0.26em] md:text-[12px]"
-                style={{ color: `${item.accent}bb` }}
+                style={{ color: `${item.accent}cc` }}
               >
                 {item.sub}
               </p>
               <div
                 className="mt-3 h-px w-14 rounded-full md:w-16"
-                style={{ background: `${item.accent}44`, margin:'10px auto 0' }}
+                style={{ background: `${item.accent}55`, margin:'10px auto 0' }}
               />
             </div>
           )
         })}
 
         {/* Scroll indicator */}
-        <div aria-hidden className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5" style={{ zIndex:40 }}>
+        <div aria-hidden className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5" style={{ zIndex:60 }}>
           <div className="flex justify-center h-[32px] w-[20px] rounded-full border border-white/18 pt-[5px]">
             <div className="h-[6px] w-[3px] rounded-full bg-white/40" style={{ animation:'scrollDot 2s ease-in-out infinite' }} />
           </div>
