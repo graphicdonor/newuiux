@@ -196,27 +196,42 @@ export default function NexusProPage() {
 
       if (prefersReduced) return
 
-      // Overlay timeline — instant scrub so words match scroll position exactly
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: pinRef.current, scrub: true, start: 'top top', end: '+=600%' },
-      })
-
-      // 6 words, each owns 1/6 of the timeline (0.167s slot)
-      // Layout per slot: 0.04 fade-in | 0.09 hold | 0.04 fade-out = 0.17
-      const SLOT = 0.167
+      // Sidebar word list — all 6 words always visible, active one highlights on scroll
       const wordElems = [wRef0,wRef1,wRef2,wRef3,wRef4,wRef5].map(r => r.current)
+
+      // Set initial dim state for all words
       wordElems.forEach((el, i) => {
         if (!el) return
-        const slotStart = i * SLOT
-        const fadeOut   = slotStart + SLOT - 0.04   // start fade-out 0.04s before slot ends
-        tl
-          .fromTo(el,
-            { opacity:0, x: isMobile ? 0 : -36, y: isMobile ? -12 : 0 },
-            { opacity:1, x:0, y:0, duration:0.04, ease:'power2.out' },
-            slotStart)
-          .to(el,
-            { opacity:0, x: isMobile ? 0 : -14, y: isMobile ? 12 : 0, duration:0.04, ease:'power2.in' },
-            fadeOut)
+        const subEl  = el.querySelector('[data-sub]')  as HTMLElement | null
+        const lineEl = el.querySelector('[data-line]') as HTMLElement | null
+        gsap.set(el,    { opacity: i === 0 ? 1 : 0.13 })
+        gsap.set(subEl,  { opacity: i === 0 ? 1 : 0 })
+        gsap.set(lineEl, { scaleX:  i === 0 ? 1 : 0, transformOrigin: 'left center' })
+      })
+
+      let activeIdx = 0
+      ScrollTrigger.create({
+        trigger: pinRef.current,
+        start: 'top top', end: '+=600%',
+        onUpdate: self => {
+          const next = Math.min(5, Math.floor(self.progress * 6))
+          if (next === activeIdx) return
+          // Dim old
+          const old = wordElems[activeIdx]
+          if (old) {
+            gsap.to(old,                             { opacity: 0.13, duration: 0.25, ease: 'power1.out' })
+            gsap.to(old.querySelector('[data-sub]'),  { opacity: 0,    duration: 0.18 })
+            gsap.to(old.querySelector('[data-line]'), { scaleX: 0,     duration: 0.18 })
+          }
+          // Highlight new
+          const neu = wordElems[next]
+          if (neu) {
+            gsap.to(neu,                             { opacity: 1,    duration: 0.35, ease: 'power2.out' })
+            gsap.to(neu.querySelector('[data-sub]'),  { opacity: 1,    duration: 0.35 })
+            gsap.to(neu.querySelector('[data-line]'), { scaleX: 1,     duration: 0.35, transformOrigin: 'left center' })
+          }
+          activeIdx = next
+        },
       })
 
       // Product grid entrance
@@ -363,38 +378,38 @@ export default function NexusProPage() {
           <p className="font-cinzel text-[10px] uppercase tracking-[0.28em] text-white/15 md:text-[11px]">Teasanti</p>
         </div>
 
-        {/* ── Sequential left-side words (appear one by one on scroll) ── */}
-        {([wRef0,wRef1,wRef2,wRef3,wRef4,wRef5] as React.RefObject<HTMLDivElement>[]).map((ref, i) => {
-          const item = SCROLL_WORDS[i]
-          return (
-            <div
-              key={item.word}
-              ref={ref}
-              className="pointer-events-none absolute
-                left-0 right-0 top-1/2 -translate-y-1/2 px-6 text-center
-                md:left-[6vw] md:right-auto md:px-0 md:text-left"
-              style={{ zIndex:50, opacity:0 }}
-              aria-hidden
-            >
-              <p
-                className="font-cinzel font-bold leading-none text-white"
-                style={{ fontSize:'clamp(22px,4vw,42px)', textShadow:'0 2px 24px rgba(0,0,0,0.5)' }}
-              >
-                {item.word}
-              </p>
-              <p
-                className="mt-2 text-[11px] font-light uppercase tracking-[0.26em] md:text-[12px]"
-                style={{ color: `${item.accent}cc` }}
-              >
-                {item.sub}
-              </p>
-              <div
-                className="mt-3 h-px w-14 rounded-full md:w-16"
-                style={{ background: `${item.accent}55`, margin:'10px auto 0' }}
-              />
-            </div>
-          )
-        })}
+        {/* ── Left sidebar word list — all visible, active highlights on scroll ── */}
+        <div
+          className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 flex flex-col gap-5 md:left-[5vw]"
+          style={{ zIndex:50 }}
+          aria-hidden
+        >
+          {([wRef0,wRef1,wRef2,wRef3,wRef4,wRef5] as React.RefObject<HTMLDivElement>[]).map((ref, i) => {
+            const item = SCROLL_WORDS[i]
+            return (
+              <div key={item.word} ref={ref} style={{ opacity: i === 0 ? 1 : 0.13 }}>
+                <p
+                  className="font-cinzel font-bold leading-none text-white"
+                  style={{ fontSize:'clamp(16px,2.2vw,28px)' }}
+                >
+                  {item.word}
+                </p>
+                <p
+                  data-sub=""
+                  className="mt-1 text-[9px] font-light uppercase tracking-[0.24em] md:text-[10px]"
+                  style={{ color: item.accent, opacity: i === 0 ? 1 : 0 }}
+                >
+                  {item.sub}
+                </p>
+                <div
+                  data-line=""
+                  className="mt-1.5 h-px w-10 rounded-full"
+                  style={{ background: item.accent, opacity:0.5, transform: i === 0 ? 'scaleX(1)' : 'scaleX(0)', transformOrigin:'left center' }}
+                />
+              </div>
+            )
+          })}
+        </div>
 
         {/* Scroll indicator */}
         <div aria-hidden className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5" style={{ zIndex:60 }}>
