@@ -378,7 +378,7 @@ export default function NexusProPage() {
             </p>
             <div
               className="mt-3 h-px w-14 rounded-full md:w-16"
-              style={{ background: `${item.accent}44`, margin:'10px auto 0', marginLeft: undefined }}
+              style={{ background: `${item.accent}44`, margin:'10px auto 0' }}
             />
           </div>
         ))}
