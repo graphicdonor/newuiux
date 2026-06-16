@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import NexusProPage from '@/components/nexus-pro/NexusProPage'
 
 export const metadata: Metadata = {
-  title: 'CHAIYA — Ancient Wisdom. Modern Ritual.',
+  title: 'Teasanti — Ancient Wisdom. Modern Ritual.',
   description:
-    'Introducing CHAIYA. Three exceptional teas sourced from ancient gardens. Jade White, Amber Oolong, Midnight Pu-erh. Every steep, perfected.',
+    'Six exceptional teas sourced from the world\'s finest gardens. Jade White, Amber Oolong, Midnight Pu-erh, Silver Needle, Dragon Well, Rose Oolong. From $48.',
 }
 
 export default function NexusProRoute() {
