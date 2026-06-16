@@ -72,7 +72,12 @@ export default function NexusProPage() {
   const mobileNavRef = useRef<HTMLDivElement>(null)
   const pinRef       = useRef<HTMLElement>(null)
   const videoRef     = useRef<HTMLVideoElement>(null)
-  const wordRefs     = useRef<(HTMLDivElement | null)[]>([])
+  const wRef0 = useRef<HTMLDivElement>(null)
+  const wRef1 = useRef<HTMLDivElement>(null)
+  const wRef2 = useRef<HTMLDivElement>(null)
+  const wRef3 = useRef<HTMLDivElement>(null)
+  const wRef4 = useRef<HTMLDivElement>(null)
+  const wRef5 = useRef<HTMLDivElement>(null)
   const prodSectionRef = useRef<HTMLElement>(null)
   const cardRefs     = useRef<(HTMLDivElement | null)[]>([])
   const ctaRef       = useRef<HTMLElement>(null)
@@ -197,15 +202,17 @@ export default function NexusProPage() {
       })
 
       // Sequential left-side words — 6 words evenly across full scroll
-      SCROLL_WORDS.forEach((_, i) => {
-        const appear = 0.02 + i * 0.16
+      const wordElems = [wRef0,wRef1,wRef2,wRef3,wRef4,wRef5].map(r => r.current)
+      wordElems.forEach((el, i) => {
+        if (!el) return
+        const appear    = 0.02 + i * 0.16
         const disappear = appear + 0.10
         tl
-          .fromTo(wordRefs.current[i],
+          .fromTo(el,
             { opacity:0, x: isMobile ? 0 : -55, y: isMobile ? -22 : 0 },
             { opacity:1, x:0, y:0, duration:0.09, ease:'power3.out' },
             appear)
-          .to(wordRefs.current[i],
+          .to(el,
             { opacity:0, x: isMobile ? 0 : -22, y: isMobile ? 22 : 0, duration:0.07, ease:'power2.in' },
             disappear)
       })
@@ -354,34 +361,37 @@ export default function NexusProPage() {
         </div>
 
         {/* ── Sequential left-side words (appear one by one on scroll) ── */}
-        {SCROLL_WORDS.map((item, i) => (
-          <div
-            key={item.word}
-            ref={el => { wordRefs.current[i] = el }}
-            className="pointer-events-none absolute opacity-0
-              left-0 right-0 top-1/2 -translate-y-1/2 px-6 text-center
-              md:left-[6vw] md:right-auto md:px-0 md:text-left"
-            style={{ zIndex:20, willChange:'transform,opacity' }}
-            aria-hidden
-          >
-            <p
-              className="font-cinzel font-bold leading-none text-white"
-              style={{ fontSize:'clamp(44px,10vw,100px)', textShadow:'0 2px 40px rgba(0,0,0,0.6)' }}
-            >
-              {item.word}
-            </p>
-            <p
-              className="mt-2 text-[11px] font-light uppercase tracking-[0.26em] md:text-[12px]"
-              style={{ color: `${item.accent}bb` }}
-            >
-              {item.sub}
-            </p>
+        {([wRef0,wRef1,wRef2,wRef3,wRef4,wRef5] as React.RefObject<HTMLDivElement>[]).map((ref, i) => {
+          const item = SCROLL_WORDS[i]
+          return (
             <div
-              className="mt-3 h-px w-14 rounded-full md:w-16"
-              style={{ background: `${item.accent}44`, margin:'10px auto 0' }}
-            />
-          </div>
-        ))}
+              key={item.word}
+              ref={ref}
+              className="pointer-events-none absolute
+                left-0 right-0 top-1/2 -translate-y-1/2 px-6 text-center
+                md:left-[6vw] md:right-auto md:px-0 md:text-left"
+              style={{ zIndex:20, willChange:'transform,opacity', opacity:0 }}
+              aria-hidden
+            >
+              <p
+                className="font-cinzel font-bold leading-none text-white"
+                style={{ fontSize:'clamp(44px,10vw,100px)', textShadow:'0 2px 40px rgba(0,0,0,0.6)' }}
+              >
+                {item.word}
+              </p>
+              <p
+                className="mt-2 text-[11px] font-light uppercase tracking-[0.26em] md:text-[12px]"
+                style={{ color: `${item.accent}bb` }}
+              >
+                {item.sub}
+              </p>
+              <div
+                className="mt-3 h-px w-14 rounded-full md:w-16"
+                style={{ background: `${item.accent}44`, margin:'10px auto 0' }}
+              />
+            </div>
+          )
+        })}
 
         {/* Scroll indicator */}
         <div aria-hidden className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5" style={{ zIndex:40 }}>
