@@ -187,50 +187,48 @@ export default function NexusProPage() {
 
     const gsapCtx = gsap.context(() => {
 
-      // Video scrub pin
-      ScrollTrigger.create({
-        trigger: pinRef.current, pin: true, scrub: true,
-        start: 'top top', end: '+=600%',
-        onUpdate: self => { if (video.duration) targetTime = self.progress * video.duration },
-      })
-
-      if (prefersReduced) return
-
-      // Sidebar word list — all 6 words always visible, active one highlights on scroll
+      // Pre-compute sidebar word refs (done before creating the trigger)
       const wordElems = [wRef0,wRef1,wRef2,wRef3,wRef4,wRef5].map(r => r.current)
+      const subEls:  (Element|null)[] = []
+      const lineEls: (Element|null)[] = []
 
-      // Set initial dim state for all words
       wordElems.forEach((el, i) => {
-        if (!el) return
-        const subEl  = el.querySelector('[data-sub]')  as HTMLElement | null
-        const lineEl = el.querySelector('[data-line]') as HTMLElement | null
-        gsap.set(el,    { opacity: i === 0 ? 1 : 0.13 })
-        gsap.set(subEl,  { opacity: i === 0 ? 1 : 0 })
-        gsap.set(lineEl, { scaleX:  i === 0 ? 1 : 0, transformOrigin: 'left center' })
+        subEls.push(el ? el.querySelector('[data-sub]') : null)
+        lineEls.push(el ? el.querySelector('[data-line]') : null)
+        if (!el || prefersReduced) return
+        gsap.set(el,        { opacity: i === 0 ? 1 : 0.13 })
+        gsap.set(subEls[i],  { opacity: i === 0 ? 1 : 0 })
+        gsap.set(lineEls[i], { scaleX: i === 0 ? 1 : 0, transformOrigin: 'left center' })
       })
 
       let activeIdx = -1
+
+      // Single pinned trigger — video scrub + sidebar words share the same progress
       ScrollTrigger.create({
-        trigger: pinRef.current,
+        trigger: pinRef.current, pin: true, scrub: true,
         start: 'top top', end: '+=600%',
         onUpdate: self => {
+          // Video scrub
+          if (video.duration) targetTime = self.progress * video.duration
+
+          if (prefersReduced) return
+
+          // Sidebar words — one at a time
           const next = Math.min(5, Math.floor(self.progress * 6))
           if (next === activeIdx) return
           activeIdx = next
 
-          // Reset ALL to dim first (overwrite kills any stacked tweens)
-          wordElems.forEach(el => {
+          wordElems.forEach((el, i) => {
             if (!el) return
-            gsap.to(el,                             { opacity:0.13, duration:0.22, overwrite:true })
-            gsap.to(el.querySelector('[data-sub]'),  { opacity:0,    duration:0.15, overwrite:true })
-            gsap.to(el.querySelector('[data-line]'), { scaleX:0, transformOrigin:'left center', duration:0.15, overwrite:true })
+            gsap.to(el,        { opacity:0.13, duration:0.22, overwrite:true })
+            gsap.to(subEls[i],  { opacity:0,    duration:0.15, overwrite:true })
+            gsap.to(lineEls[i], { scaleX:0, transformOrigin:'left center', duration:0.15, overwrite:true })
           })
-          // Highlight only the active word
           const neu = wordElems[next]
           if (neu) {
-            gsap.to(neu,                             { opacity:1,   duration:0.35, ease:'power2.out', overwrite:true })
-            gsap.to(neu.querySelector('[data-sub]'),  { opacity:1,   duration:0.35, overwrite:true })
-            gsap.to(neu.querySelector('[data-line]'), { scaleX:1, transformOrigin:'left center', duration:0.35, overwrite:true })
+            gsap.to(neu,          { opacity:1,   duration:0.35, ease:'power2.out', overwrite:true })
+            gsap.to(subEls[next],  { opacity:1,   duration:0.35, overwrite:true })
+            gsap.to(lineEls[next], { scaleX:1, transformOrigin:'left center', duration:0.35, overwrite:true })
           }
         },
       })
