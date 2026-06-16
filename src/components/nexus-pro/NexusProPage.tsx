@@ -209,28 +209,29 @@ export default function NexusProPage() {
         gsap.set(lineEl, { scaleX:  i === 0 ? 1 : 0, transformOrigin: 'left center' })
       })
 
-      let activeIdx = 0
+      let activeIdx = -1
       ScrollTrigger.create({
         trigger: pinRef.current,
         start: 'top top', end: '+=600%',
         onUpdate: self => {
           const next = Math.min(5, Math.floor(self.progress * 6))
           if (next === activeIdx) return
-          // Dim old
-          const old = wordElems[activeIdx]
-          if (old) {
-            gsap.to(old,                             { opacity: 0.13, duration: 0.25, ease: 'power1.out' })
-            gsap.to(old.querySelector('[data-sub]'),  { opacity: 0,    duration: 0.18 })
-            gsap.to(old.querySelector('[data-line]'), { scaleX: 0,     duration: 0.18 })
-          }
-          // Highlight new
+          activeIdx = next
+
+          // Reset ALL to dim first (overwrite kills any stacked tweens)
+          wordElems.forEach(el => {
+            if (!el) return
+            gsap.to(el,                             { opacity:0.13, duration:0.22, overwrite:true })
+            gsap.to(el.querySelector('[data-sub]'),  { opacity:0,    duration:0.15, overwrite:true })
+            gsap.to(el.querySelector('[data-line]'), { scaleX:0, transformOrigin:'left center', duration:0.15, overwrite:true })
+          })
+          // Highlight only the active word
           const neu = wordElems[next]
           if (neu) {
-            gsap.to(neu,                             { opacity: 1,    duration: 0.35, ease: 'power2.out' })
-            gsap.to(neu.querySelector('[data-sub]'),  { opacity: 1,    duration: 0.35 })
-            gsap.to(neu.querySelector('[data-line]'), { scaleX: 1,     duration: 0.35, transformOrigin: 'left center' })
+            gsap.to(neu,                             { opacity:1,   duration:0.35, ease:'power2.out', overwrite:true })
+            gsap.to(neu.querySelector('[data-sub]'),  { opacity:1,   duration:0.35, overwrite:true })
+            gsap.to(neu.querySelector('[data-line]'), { scaleX:1, transformOrigin:'left center', duration:0.35, overwrite:true })
           }
-          activeIdx = next
         },
       })
 
