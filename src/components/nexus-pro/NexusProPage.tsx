@@ -62,7 +62,6 @@ export default function NexusProPage() {
   const mobileNavRef = useRef<HTMLDivElement>(null)
   const pinRef       = useRef<HTMLElement>(null)
   const videoRef     = useRef<HTMLVideoElement>(null)
-  const heroGroupRef = useRef<HTMLDivElement>(null)
   const w2LeftRef    = useRef<HTMLDivElement>(null)
   const w2RightRef   = useRef<HTMLDivElement>(null)
   const w3LeftRef    = useRef<HTMLDivElement>(null)
@@ -191,13 +190,6 @@ export default function NexusProPage() {
       const tl = gsap.timeline({
         scrollTrigger: { trigger: pinRef.current, scrub: 1.0, start: 'top top', end: '+=600%' },
       })
-
-      // Phase 1: Hero
-      tl
-        .fromTo(heroGroupRef.current,
-          { opacity:0, y:28 }, { opacity:1, y:0, duration:0.16, ease:'power3.out' }, 0.02)
-        .to(heroGroupRef.current,
-          { opacity:0, y:-22, duration:0.14, ease:'power2.in' }, 0.20)
 
       // Phase 2: PURE / RARE — x on desktop, y on mobile
         .fromTo(w2LeftRef.current,
@@ -371,23 +363,6 @@ export default function NexusProPage() {
           <p className="font-cinzel text-[10px] uppercase tracking-[0.28em] text-white/15 md:text-[11px]">Teasanti</p>
         </div>
 
-        {/* ── Phase 1: Hero ── */}
-        <div ref={heroGroupRef} className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-5 opacity-0" style={{ zIndex:20 }}>
-          <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.32em] md:mb-5 md:text-[12px]" style={{ color:'#c8a96e' }}>
-            Est. 2024 · Premium Tea
-          </p>
-          <h1
-            className="mb-4 text-center font-cinzel font-bold leading-none tracking-[-0.01em] text-white md:mb-5"
-            style={{ fontSize:'clamp(46px,11vw,118px)', textShadow:'0 4px 40px rgba(0,0,0,0.65)' }}
-          >
-            TEASANTI
-          </h1>
-          <div className="mb-4 h-px w-20 rounded-full md:mb-5 md:w-24" style={{ background:'linear-gradient(90deg,transparent,rgba(200,168,100,0.55),transparent)' }} />
-          <p className="text-center font-light tracking-wide text-white/50" style={{ fontSize:'clamp(14px,2vw,22px)' }}>
-            Ancient wisdom. Modern ritual.
-          </p>
-        </div>
-
         {/* ── Phase 2: PURE / RARE ──
              Mobile: top 30% and bottom 30%, centered
              Desktop: left side and right side, vertically centered */}
@@ -526,6 +501,46 @@ export default function NexusProPage() {
             <div aria-hidden className="flex-shrink-0 w-4 md:w-8" />
           </div>
         </div>
+      </section>
+
+      {/* ══ BRAND IDENTITY ══════════════════════════════════════════════ */}
+      <section className="relative bg-black py-28 px-5 overflow-hidden md:py-36 md:px-12" aria-label="Teasanti brand">
+
+        {/* Ambient glow */}
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background:'radial-gradient(ellipse at 50% 50%, rgba(200,168,100,0.06) 0%, rgba(138,170,120,0.04) 40%, transparent 70%)' }} />
+
+        {/* Decorative top line */}
+        <div aria-hidden className="mx-auto mb-16 h-px max-w-xs md:mb-20 md:max-w-sm" style={{ background:'linear-gradient(90deg,transparent,rgba(200,168,100,0.35),transparent)' }} />
+
+        <div className="relative mx-auto max-w-3xl text-center">
+          <p className="mb-6 text-[11px] font-medium uppercase tracking-[0.38em] md:mb-8 md:text-[12px]" style={{ color:'#c8a96e' }}>
+            Est. 2024 · Premium Tea
+          </p>
+
+          <h2
+            className="mb-6 font-cinzel font-bold leading-none tracking-[-0.01em] text-white md:mb-8"
+            style={{ fontSize:'clamp(52px,12vw,130px)', textShadow:'0 2px 60px rgba(200,168,100,0.18)' }}
+          >
+            TEASANTI
+          </h2>
+
+          <div className="mx-auto mb-8 h-px w-24 md:mb-10 md:w-32" style={{ background:'linear-gradient(90deg,transparent,rgba(200,168,100,0.50),transparent)' }} />
+
+          <p
+            className="mb-6 font-light tracking-wide text-white/60 md:mb-8"
+            style={{ fontSize:'clamp(18px,3vw,30px)', letterSpacing:'0.04em' }}
+          >
+            Ancient wisdom. Modern ritual.
+          </p>
+
+          <p className="mx-auto max-w-xl text-[14px] font-light leading-relaxed text-white/32 md:text-[16px]">
+            Sourced from the world&rsquo;s most storied tea gardens — Darjeeling, Wuyi, Yunnan, Hangzhou.
+            Every cup carries the memory of altitude, season, and a thousand careful hands.
+          </p>
+        </div>
+
+        {/* Decorative bottom line */}
+        <div aria-hidden className="mx-auto mt-16 h-px max-w-xs md:mt-20 md:max-w-sm" style={{ background:'linear-gradient(90deg,transparent,rgba(138,170,120,0.28),transparent)' }} />
       </section>
 
       {/* ══ CTA ═════════════════════════════════════════════════════════ */}
