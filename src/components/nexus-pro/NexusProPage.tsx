@@ -455,7 +455,7 @@ export default function NexusProPage() {
 
         {/* Scroll indicator */}
         <div aria-hidden className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5" style={{ zIndex:40 }}>
-          <div className="h-[32px] w-[20px] rounded-full border border-white/18 p-[5px]">
+          <div className="flex justify-center h-[32px] w-[20px] rounded-full border border-white/18 pt-[5px]">
             <div className="h-[6px] w-[3px] rounded-full bg-white/40" style={{ animation:'scrollDot 2s ease-in-out infinite' }} />
           </div>
           <span className="text-[9px] uppercase tracking-[0.2em] text-white/20">Scroll</span>
