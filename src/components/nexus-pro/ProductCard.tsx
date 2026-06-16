@@ -159,7 +159,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
         </div>
 
         {/* Canister visual */}
-        <div className="relative flex h-48 items-center justify-center overflow-hidden px-6 pt-6">
+        <div className="relative flex h-44 items-center justify-center overflow-hidden px-6 pt-5 sm:h-48 sm:pt-6">
           <div aria-hidden className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 65%, ${product.glowRgba.replace(/[\d.]+\)$/, '0.08)')} 0%, transparent 70%)` }} />
           <div className="relative" style={{ filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.5))' }}>
             <div className="relative h-[120px] w-[76px]">
@@ -207,7 +207,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
           <div className="flex items-center justify-between">
             <span className="text-[16px] font-medium text-white">{product.price}</span>
             <button
-              className="min-h-[40px] rounded-full border border-white/[0.13] px-4 text-[12px] font-medium text-white/55 transition-all duration-200 hover:border-white/28 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40 active:scale-95"
+              className="min-h-[44px] rounded-full border border-white/[0.13] px-4 text-[13px] font-medium text-white/55 transition-all duration-200 hover:border-white/28 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40 active:scale-95"
               aria-label={`Add ${product.edition} to cart`}
             >
               Add to Cart
