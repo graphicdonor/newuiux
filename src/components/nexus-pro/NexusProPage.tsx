@@ -420,7 +420,7 @@ export default function NexusProPage() {
       </section>
 
       {/* ══ PRODUCT STRIP ═══════════════════════════════════════════════ */}
-      <section ref={prodSectionRef} className="relative bg-black pb-20 pt-20 md:py-28" aria-label="Our Tea Collection">
+      <section ref={prodSectionRef} className="relative bg-black pb-6 pt-20 md:pt-24 md:pb-8" aria-label="Our Tea Collection">
 
         {/* Section header */}
         <div className="mx-auto mb-10 max-w-7xl px-5 text-center md:mb-14 md:px-12">
@@ -461,13 +461,13 @@ export default function NexusProPage() {
       </section>
 
       {/* ══ BRAND IDENTITY ══════════════════════════════════════════════ */}
-      <section className="relative bg-black py-28 px-5 overflow-hidden md:py-36 md:px-12" aria-label="Teasanti brand">
+      <section className="relative bg-black py-16 px-5 overflow-hidden md:py-20 md:px-12" aria-label="Teasanti brand">
 
         {/* Ambient glow */}
         <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background:'radial-gradient(ellipse at 50% 50%, rgba(200,168,100,0.06) 0%, rgba(138,170,120,0.04) 40%, transparent 70%)' }} />
 
         {/* Decorative top line */}
-        <div aria-hidden className="mx-auto mb-16 h-px max-w-xs md:mb-20 md:max-w-sm" style={{ background:'linear-gradient(90deg,transparent,rgba(200,168,100,0.35),transparent)' }} />
+        <div aria-hidden className="mx-auto mb-10 h-px max-w-xs md:mb-12 md:max-w-sm" style={{ background:'linear-gradient(90deg,transparent,rgba(200,168,100,0.35),transparent)' }} />
 
         <div className="relative mx-auto max-w-3xl text-center">
           <p className="mb-6 text-[11px] font-medium uppercase tracking-[0.38em] md:mb-8 md:text-[12px]" style={{ color:'#c8a96e' }}>
