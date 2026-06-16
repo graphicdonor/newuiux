@@ -3,22 +3,15 @@
 /**
  * CHAIYA Tea — scroll-scrubbed video background.
  *
- * The <video> element is paused on mount; its currentTime is driven
- * directly by scroll progress via GSAP ScrollTrigger so it feels like
- * the user is "playing" the video with their scroll.
- *
- * Layout
- * ──────
- * ┌ PINNED (500vh travel) ───────────────────────────────────────────┐
- * │  [video bg, full-screen, scrubbed 0→duration over full pin]      │
- * │  Phase 0.00→0.35  Hero: eyebrow + title + sub fade in → out      │
- * │  Phase 0.35→0.65  Side texts slide in                            │
- * │  Phase 0.65→0.85  Product grid fades in                          │
- * │  Phase 0.85→1.00  Hold (grid stays)                              │
- * └──────────────────────────────────────────────────────────────────┘
- * ┌ CTA (120vh travel, separate ScrollTrigger) ─────────────────────┐
- * │  Glow bloom + title + sub + button stagger in                    │
- * └──────────────────────────────────────────────────────────────────┘
+ * Performance design:
+ *  • Video has its own ScrollTrigger with scrub:true (instant, zero lag).
+ *    fastSeek() is used where available — it snaps to the nearest keyframe
+ *    which is ~10× cheaper than a precision currentTime seek.
+ *  • A RAF gate ensures at most one seek per animation frame regardless of
+ *    how many onUpdate calls GSAP fires.
+ *  • A separate timeline ScrollTrigger (no pin, scrub:1.2) handles the
+ *    overlay text so it stays silky-smooth independently of video decode.
+ *  • Lenis ticker feeds ScrollTrigger so Lenis easing and GSAP are in sync.
  */
 
 import { useEffect, useRef } from 'react'
@@ -27,6 +20,9 @@ import { ScrollTrigger }      from 'gsap/ScrollTrigger'
 import ProductCard, { PRODUCTS } from './ProductCard'
 
 gsap.registerPlugin(ScrollTrigger)
+
+// Extend HTMLVideoElement to include non-standard fastSeek
+type VideoEl = HTMLVideoElement & { fastSeek?: (t: number) => void }
 
 export default function NexusProPage() {
   const wrapRef       = useRef<HTMLDivElement>(null)
@@ -46,10 +42,31 @@ export default function NexusProPage() {
 
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const video = videoRef.current!
+    const video = videoRef.current as VideoEl
 
-    // Pause immediately — we scrub manually via currentTime
+    // Ensure the video never auto-plays — we drive it entirely via seek
     video.pause()
+
+    // ── RAF-gated video seek ──────────────────────────────────────────
+    let pendingSeek: number | null = null
+    let pendingTime = 0
+
+    const flushSeek = () => {
+      pendingSeek = null
+      if (video.readyState < 1 || !video.duration) return
+      if (video.fastSeek) {
+        video.fastSeek(pendingTime)
+      } else {
+        video.currentTime = pendingTime
+      }
+    }
+
+    const scheduleSeek = (t: number) => {
+      pendingTime = t
+      if (pendingSeek === null) {
+        pendingSeek = requestAnimationFrame(flushSeek)
+      }
+    }
 
     // ── Lenis smooth scroll ──────────────────────────────────────────
     let lenis: import('lenis').default | null = null
@@ -57,8 +74,8 @@ export default function NexusProPage() {
       try {
         const { default: Lenis } = await import('lenis')
         lenis = new Lenis({
-          duration: 1.1,
-          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          duration      : 1.05,
+          easing        : (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           touchMultiplier: 2,
         })
         lenis.on('scroll', ScrollTrigger.update)
@@ -70,37 +87,36 @@ export default function NexusProPage() {
     const gsapCtx = gsap.context(() => {
 
       /* ═══════════════════════════════════════════════════════════
-       * VIDEO SCRUB — driven by the same ScrollTrigger as the pin
+       * ST-1 — pin + instant video scrub (scrub: true = zero lag)
        * ═══════════════════════════════════════════════════════════ */
       ScrollTrigger.create({
         trigger : pinRef.current,
         pin     : true,
-        scrub   : 1.6,
+        scrub   : true,           // ← instant: no easing buffer
         start   : 'top top',
         end     : '+=500%',
         onUpdate: (self) => {
-          if (video.readyState >= 1 && video.duration) {
-            video.currentTime = self.progress * video.duration
-          }
+          if (!video.duration) return
+          scheduleSeek(self.progress * video.duration)
         },
       })
 
       if (prefersReduced) return
 
       /* ═══════════════════════════════════════════════════════════
-       * OVERLAY TIMELINE — shares the same trigger window
+       * ST-2 — overlay animations (scrub: 1.2, no extra pin)
        * ═══════════════════════════════════════════════════════════ */
       const mainTl = gsap.timeline({
         scrollTrigger: {
           trigger : pinRef.current,
-          scrub   : 1.6,
+          scrub   : 1.2,          // ← smooth easing for text
           start   : 'top top',
           end     : '+=500%',
         },
       })
 
-      // Phase 1 — hero fades in then out
       mainTl
+        // Hero in
         .fromTo(eyebrowRef.current,
           { opacity: 0, y: 16 },
           { opacity: 1, y: 0, duration: 0.18, ease: 'power2.out' }, 0.02)
@@ -111,24 +127,25 @@ export default function NexusProPage() {
           { opacity: 0, y: 20 },
           { opacity: 1, y: 0, duration: 0.18, ease: 'power2.out' }, 0.08)
 
-        .to(eyebrowRef.current, { opacity: 0, y: -20, duration: 0.16, ease: 'power2.in' }, 0.26)
-        .to(titleRef.current,   { opacity: 0, y: -48, duration: 0.20, ease: 'power2.in' }, 0.28)
-        .to(subRef.current,     { opacity: 0, y: -14, duration: 0.16, ease: 'power2.in' }, 0.30)
+        // Hero out
+        .to(eyebrowRef.current, { opacity: 0, y: -18, duration: 0.14, ease: 'power2.in' }, 0.26)
+        .to(titleRef.current,   { opacity: 0, y: -44, duration: 0.18, ease: 'power2.in' }, 0.28)
+        .to(subRef.current,     { opacity: 0, y: -12, duration: 0.14, ease: 'power2.in' }, 0.30)
 
-      // Phase 2 — side texts slide in
+        // Side texts in
         .fromTo(leftTextRef.current,
-          { opacity: 0, x: -60 },
-          { opacity: 1, x: 0, duration: 0.22, ease: 'power3.out' }, 0.36)
+          { opacity: 0, x: -55 },
+          { opacity: 1, x: 0, duration: 0.20, ease: 'power3.out' }, 0.36)
         .fromTo(rightTextRef.current,
-          { opacity: 0, x: 60 },
-          { opacity: 1, x: 0, duration: 0.22, ease: 'power3.out' }, 0.40)
+          { opacity: 0, x: 55 },
+          { opacity: 1, x: 0, duration: 0.20, ease: 'power3.out' }, 0.40)
 
-      // Phase 3 — product grid in, side texts out
-        .to(leftTextRef.current,  { opacity: 0, x: -30, duration: 0.16, ease: 'power1.in' }, 0.62)
-        .to(rightTextRef.current, { opacity: 0, x: 30,  duration: 0.16, ease: 'power1.in' }, 0.62)
+        // Side texts out, product grid in
+        .to(leftTextRef.current,  { opacity: 0, x: -28, duration: 0.14, ease: 'power1.in' }, 0.62)
+        .to(rightTextRef.current, { opacity: 0, x: 28,  duration: 0.14, ease: 'power1.in' }, 0.62)
         .fromTo(gridRef.current,
-          { opacity: 0, y: 48 },
-          { opacity: 1, y: 0, duration: 0.24, ease: 'power2.out' }, 0.65)
+          { opacity: 0, y: 44 },
+          { opacity: 1, y: 0, duration: 0.22, ease: 'power2.out' }, 0.65)
 
         // hold
         .to({}, { duration: 0.15 }, 0.86)
@@ -140,7 +157,7 @@ export default function NexusProPage() {
         scrollTrigger: {
           trigger : ctaRef.current,
           pin     : true,
-          scrub   : 1.4,
+          scrub   : 1.2,
           start   : 'top top',
           end     : '+=120%',
         },
@@ -151,14 +168,14 @@ export default function NexusProPage() {
           { opacity: 0, scale: 0.5 },
           { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' }, 0)
         .fromTo(ctaTitleRef.current,
-          { opacity: 0, y: 48 },
-          { opacity: 1, y: 0, duration: 0.4,  ease: 'power3.out' }, 0.22)
+          { opacity: 0, y: 44 },
+          { opacity: 1, y: 0, duration: 0.38, ease: 'power3.out' }, 0.22)
         .fromTo(ctaSubRef.current,
-          { opacity: 0, y: 24 },
-          { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, 0.36)
+          { opacity: 0, y: 22 },
+          { opacity: 1, y: 0, duration: 0.32, ease: 'power2.out' }, 0.36)
         .fromTo(ctaBtnRef.current,
-          { opacity: 0, scale: 0.85 },
-          { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.5)' }, 0.48)
+          { opacity: 0, scale: 0.88 },
+          { opacity: 1, scale: 1, duration: 0.32, ease: 'back.out(1.4)' }, 0.48)
 
     }, wrapRef)
 
@@ -173,6 +190,7 @@ export default function NexusProPage() {
     return () => {
       gsapCtx.revert()
       lenis?.destroy()
+      if (pendingSeek !== null) cancelAnimationFrame(pendingSeek)
       window.removeEventListener('resize', onResize)
       clearTimeout(resizeTimer)
     }
@@ -181,9 +199,9 @@ export default function NexusProPage() {
   return (
     <div ref={wrapRef} className="bg-black text-white antialiased overflow-x-hidden">
 
-      {/* ════════════════════════════════════════════════════════════
+      {/* ════════════════════════════════════════════════════════
           PINNED SECTION
-      ════════════════════════════════════════════════════════════ */}
+      ════════════════════════════════════════════════════════ */}
       <section
         ref={pinRef}
         className="relative h-screen w-full overflow-hidden bg-black"
@@ -198,7 +216,7 @@ export default function NexusProPage() {
           preload="auto"
           aria-hidden
           className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-          style={{ zIndex: 1 }}
+          style={{ zIndex: 1, willChange: 'auto' }}
         />
 
         {/* Gradient overlay for text legibility */}
@@ -207,13 +225,17 @@ export default function NexusProPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              'linear-gradient(to bottom, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.60) 100%)',
+              'linear-gradient(to bottom, rgba(0,0,0,0.40) 0%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.58) 100%)',
             zIndex: 2,
           }}
         />
 
         {/* Grain */}
-        <div aria-hidden className="grain pointer-events-none absolute inset-0 opacity-[0.025]" style={{ zIndex: 3 }} />
+        <div
+          aria-hidden
+          className="grain pointer-events-none absolute inset-0 opacity-[0.025]"
+          style={{ zIndex: 3 }}
+        />
 
         {/* ── Hero ── */}
         <div
@@ -250,7 +272,10 @@ export default function NexusProPage() {
           style={{ zIndex: 20, willChange: 'transform, opacity' }}
           aria-hidden
         >
-          <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.28em]" style={{ color: '#c8a96e' }}>
+          <p
+            className="mb-2 text-[11px] font-medium uppercase tracking-[0.28em]"
+            style={{ color: '#c8a96e' }}
+          >
             Origin
           </p>
           <p
@@ -267,7 +292,10 @@ export default function NexusProPage() {
           style={{ zIndex: 20, willChange: 'transform, opacity' }}
           aria-hidden
         >
-          <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.28em]" style={{ color: '#8aaa78' }}>
+          <p
+            className="mb-2 text-[11px] font-medium uppercase tracking-[0.28em]"
+            style={{ color: '#8aaa78' }}
+          >
             Craft
           </p>
           <p
@@ -284,7 +312,6 @@ export default function NexusProPage() {
           className="pointer-events-auto absolute inset-0 flex items-center justify-center px-6 opacity-0"
           style={{ zIndex: 30, willChange: 'transform, opacity' }}
         >
-          {/* Frosted backdrop so cards pop over video */}
           <div
             aria-hidden
             className="absolute inset-0"
@@ -319,16 +346,14 @@ export default function NexusProPage() {
         </div>
       </section>
 
-
-      {/* ════════════════════════════════════════════════════════════
+      {/* ════════════════════════════════════════════════════════
           CTA SECTION
-      ════════════════════════════════════════════════════════════ */}
+      ════════════════════════════════════════════════════════ */}
       <section
         ref={ctaRef}
         className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-black px-6"
         aria-label="Begin your ritual"
       >
-        {/* Warm glow bloom */}
         <div
           ref={ctaGlowRef}
           aria-hidden
@@ -340,18 +365,17 @@ export default function NexusProPage() {
           }}
         />
 
-        {/* Ambient micro-stars (deterministic — no Math.random) */}
         {[...Array(22)].map((_, i) => (
           <div
             key={i}
             aria-hidden
             className="pointer-events-none absolute rounded-full"
             style={{
-              width  : 1 + (i % 3) * 0.6,
-              height : 1 + (i % 3) * 0.6,
-              left   : `${5 + (i * 4.4) % 90}%`,
-              top    : `${5 + (i * 7.1) % 88}%`,
-              opacity: 0.06 + (i % 5) * 0.035,
+              width     : 1 + (i % 3) * 0.6,
+              height    : 1 + (i % 3) * 0.6,
+              left      : `${5 + (i * 4.4) % 90}%`,
+              top       : `${5 + (i * 7.1) % 88}%`,
+              opacity   : 0.06 + (i % 5) * 0.035,
               background: i % 2 === 0 ? 'rgba(200,168,100,1)' : 'rgba(110,160,90,1)',
             }}
           />
@@ -391,10 +415,10 @@ export default function NexusProPage() {
             ref={ctaBtnRef}
             className="group relative min-h-[56px] overflow-hidden rounded-full px-10 text-[15px] font-semibold text-white opacity-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-400/60"
             style={{
-              background: 'linear-gradient(135deg, rgba(100,70,10,0.85) 0%, rgba(50,80,20,0.80) 100%)',
-              border: '1px solid rgba(200,168,100,0.40)',
-              boxShadow: '0 0 0 1px rgba(200,168,100,0.15), 0 8px 32px rgba(80,50,5,0.40)',
-              willChange: 'transform, opacity',
+              background  : 'linear-gradient(135deg, rgba(100,70,10,0.85) 0%, rgba(50,80,20,0.80) 100%)',
+              border      : '1px solid rgba(200,168,100,0.40)',
+              boxShadow   : '0 0 0 1px rgba(200,168,100,0.15), 0 8px 32px rgba(80,50,5,0.40)',
+              willChange  : 'transform, opacity',
             }}
             aria-label="Begin your CHAIYA tea ritual"
           >
@@ -416,7 +440,6 @@ export default function NexusProPage() {
           </p>
         </div>
 
-        {/* Footer */}
         <div className="absolute inset-x-0 bottom-0 border-t border-white/[0.05] px-8 py-5">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
             <span className="font-cinzel text-[12px] font-bold uppercase tracking-[0.3em] text-white/22">
@@ -424,7 +447,11 @@ export default function NexusProPage() {
             </span>
             <div className="flex gap-6">
               {['Story', 'Sourcing', 'Ritual Guide', 'Contact'].map(l => (
-                <a key={l} href="#" className="text-[12px] text-white/22 transition-colors duration-200 hover:text-white/50">
+                <a
+                  key={l}
+                  href="#"
+                  className="text-[12px] text-white/22 transition-colors duration-200 hover:text-white/50"
+                >
                   {l}
                 </a>
               ))}
@@ -437,11 +464,11 @@ export default function NexusProPage() {
       <style>{`
         @keyframes scrollDot {
           0%, 100% { transform: translateY(0);    opacity: 0.5; }
-          50%       { transform: translateY(12px); opacity: 1; }
+          50%       { transform: translateY(12px); opacity: 1;   }
         }
         @keyframes ctaGlowPulse {
-          0%, 100% { opacity: 0.50; }
-          50%       { opacity: 1.00; }
+          0%, 100% { opacity: 0.5; }
+          50%       { opacity: 1.0; }
         }
       `}</style>
     </div>
