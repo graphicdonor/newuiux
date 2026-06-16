@@ -364,7 +364,7 @@ export default function NexusProPage() {
 
         <video ref={videoRef} muted playsInline preload="none" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full object-cover" style={{ zIndex:1 }} />
 
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background:'linear-gradient(to bottom,rgba(0,0,0,0.50) 0%,rgba(0,0,0,0.10) 45%,rgba(0,0,0,0.65) 100%)', zIndex:2 }} />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background:'linear-gradient(to bottom,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.72) 45%,rgba(0,0,0,0.85) 100%)', zIndex:2 }} />
         <div aria-hidden className="grain pointer-events-none absolute inset-0 opacity-[0.022]" style={{ zIndex:3 }} />
 
         {/* Brand watermark */}
