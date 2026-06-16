@@ -50,6 +50,113 @@ const IconMenu = () => (
   </svg>
 )
 
+// ─── Ritual steps ───────────────────────────────────────────────────────────
+const RITUAL_STEPS = [
+  {
+    num: 1,
+    title: 'Prepare\nYour Space',
+    optional: false,
+    badge: null as { top: string; bot: string } | null,
+    desc: 'Find a quiet spot. Put away distractions for a few minutes. Take a few slow breaths.',
+    bullets: null as string[] | null,
+    icon: (
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <path d="M10 44 Q10 52 20 52 H44 Q54 52 54 44 V38 H10 Z"/>
+        <path d="M20 38 V24 Q20 16 32 16 Q44 16 44 24 V38"/>
+        <path d="M54 41 Q60 39 60 34 Q60 29 54 38"/>
+        <path d="M28 16 Q28 10 32 8 Q36 10 36 16"/>
+        <ellipse cx="32" cy="9" rx="3" ry="2.5"/>
+      </svg>
+    ),
+  },
+  {
+    num: 2,
+    title: 'Heat\nthe Water',
+    optional: false,
+    badge: { top: '70–80°C', bot: '(160–175°F)' },
+    desc: 'Use water around 70–80°C (160–175°F). Avoid boiling water, which can make green tea bitter.',
+    bullets: null,
+    icon: (
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <path d="M16 48 Q16 56 32 56 Q48 56 48 48 V22 Q48 14 32 14 Q16 14 16 22 Z"/>
+        <path d="M48 30 Q56 28 56 36 Q56 44 48 42"/>
+        <path d="M32 14 L32 8"/>
+        <path d="M24 11 Q28 6 32 8 Q36 6 40 11"/>
+        <rect x="29" y="26" width="6" height="14" rx="3" strokeWidth="1.2"/>
+        <path d="M32 40 L32 44" strokeWidth="2"/>
+      </svg>
+    ),
+  },
+  {
+    num: 3,
+    title: 'Steep\nthe Tea',
+    optional: false,
+    badge: { top: '1–3', bot: 'MIN' },
+    desc: 'Add 1 teaspoon (about 2–3 g) of green tea leaves per cup. Steep for 1–3 minutes depending on the variety and your taste.',
+    bullets: null,
+    icon: (
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <ellipse cx="32" cy="42" rx="22" ry="10"/>
+        <path d="M10 42 Q10 54 32 54 Q54 54 54 42"/>
+        <path d="M22 36 Q20 28 26 24 Q28 22 30 26"/>
+        <path d="M30 32 Q29 25 34 21 Q37 19 37 24"/>
+        <path d="M38 36 Q37 28 42 24 Q44 22 43 27"/>
+      </svg>
+    ),
+  },
+  {
+    num: 4,
+    title: 'Pause Before\nDrinking',
+    optional: false,
+    badge: null,
+    desc: 'Notice the aroma. Observe the color of the tea. Take a moment to appreciate the process.',
+    bullets: null,
+    icon: (
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <ellipse cx="32" cy="44" rx="20" ry="8"/>
+        <path d="M12 44 Q12 54 32 54 Q52 54 52 44"/>
+        <path d="M24 14 Q24 8 32 8 Q40 8 40 14 Q40 20 32 22 Q24 20 24 14Z"/>
+        <path d="M26 38 Q24 32 26 28"/>
+        <path d="M32 38 Q31 30 32 26"/>
+        <path d="M38 38 Q40 32 38 28"/>
+      </svg>
+    ),
+  },
+  {
+    num: 5,
+    title: 'Drink\nMindfully',
+    optional: false,
+    badge: null,
+    desc: 'Sip slowly. Focus on the warmth, flavor, and sensation. Let your attention rest on the present moment.',
+    bullets: null,
+    icon: (
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <ellipse cx="32" cy="44" rx="20" ry="8"/>
+        <path d="M12 44 Q12 54 32 54 Q52 54 52 44"/>
+        <path d="M20 28 Q20 36 32 40 Q44 36 44 28 Q44 20 32 20 Q20 20 20 28"/>
+        <path d="M18 28 Q16 18 18 14"/>
+        <path d="M46 28 Q48 18 46 14"/>
+        <path d="M24 18 Q26 10 32 8 Q38 10 40 18"/>
+      </svg>
+    ),
+  },
+  {
+    num: 6,
+    title: 'Set an\nIntention',
+    optional: true,
+    badge: null,
+    desc: 'While drinking, reflect on:',
+    bullets: ['One thing you\'re grateful for.', 'A goal for the day.', 'A quality you\'d like to cultivate (patience, focus, calm, etc.).'],
+    icon: (
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <path d="M32 56 Q32 40 20 28 Q14 22 16 12 Q24 8 32 14 Q40 8 48 12 Q50 22 44 28 Q32 40 32 56Z"/>
+        <path d="M32 40 Q26 32 28 22"/>
+        <path d="M32 40 Q38 32 36 22"/>
+      </svg>
+    ),
+  },
+] as const
+
 // ─── Scroll word sequence ────────────────────────────────────────────────────
 const SCROLL_WORDS = [
   { word: 'PURE.',      sub: 'First harvest, unblended',     accent: '#c8a96e' },
@@ -86,6 +193,9 @@ export default function NexusProPage() {
   const storyCol2Ref    = useRef<HTMLDivElement>(null)
   const storyStatsRef   = useRef<HTMLDivElement>(null)
   const storyQuoteRef   = useRef<HTMLQuoteElement>(null)
+  const ritualRef       = useRef<HTMLElement>(null)
+  const ritualHeadRef   = useRef<HTMLDivElement>(null)
+  const ritualCardRefs  = useRef<(HTMLDivElement | null)[]>([])
   const ctaRef       = useRef<HTMLElement>(null)
   const ctaGlowRef   = useRef<HTMLDivElement>(null)
   const ctaTitleRef  = useRef<HTMLHeadingElement>(null)
@@ -258,6 +368,18 @@ export default function NexusProPage() {
         .fromTo(storyStatsRef.current, { opacity:0, y:24 }, { opacity:1, y:0, duration:0.55, ease:'power2.out' }, 0.50)
         .fromTo(storyQuoteRef.current, { opacity:0, y:20 }, { opacity:1, y:0, duration:0.50, ease:'power2.out' }, 0.64)
 
+      // Ritual Guide entrance
+      gsap.fromTo(ritualHeadRef.current,
+        { opacity:0, y:40 }, { opacity:1, y:0, duration:0.7, ease:'power3.out',
+          scrollTrigger: { trigger: ritualRef.current, start:'top 75%', once:true } })
+      const ritualCards = ritualCardRefs.current.filter(Boolean)
+      if (ritualCards.length) {
+        gsap.fromTo(ritualCards, { opacity:0, y:36 }, {
+          opacity:1, y:0, stagger:0.09, duration:0.6, ease:'power2.out',
+          scrollTrigger: { trigger: ritualRef.current, start:'top 68%', once:true },
+        })
+      }
+
       // CTA
       const ctaTl = gsap.timeline({
         scrollTrigger: { trigger:ctaRef.current, pin:true, scrub:1.0, start:'top top', end:'+=120%' },
@@ -324,7 +446,7 @@ export default function NexusProPage() {
               { label:'Collections',  href:'#' },
               { label:'Our Story',    href:'#our-story' },
               { label:'Sourcing',     href:'#' },
-              { label:'Ritual Guide', href:'#' },
+              { label:'Ritual Guide', href:'#ritual-guide' },
             ].map(({ label, href }) => (
               <a key={label} href={href} className="text-[13px] font-light tracking-wide text-white/55 transition-colors duration-200 hover:text-white/90">{label}</a>
             ))}
@@ -372,14 +494,21 @@ export default function NexusProPage() {
           aria-hidden={!menuOpen}
         >
           <nav className="flex flex-col border-t border-white/[0.07] px-5 py-4" style={{ background:'rgba(4,3,1,0.92)', backdropFilter:'blur(20px)' }}>
-            {['Collections','Our Story','Sourcing','Ritual Guide','Wishlist','Search'].map(l => (
+            {[
+              { label:'Collections',  href:'#' },
+              { label:'Our Story',    href:'#our-story' },
+              { label:'Sourcing',     href:'#' },
+              { label:'Ritual Guide', href:'#ritual-guide' },
+              { label:'Wishlist',     href:'#' },
+              { label:'Search',       href:'#' },
+            ].map(({ label, href }) => (
               <a
-                key={l}
-                href="#"
+                key={label}
+                href={href}
                 className="border-b border-white/[0.06] py-3.5 text-[14px] font-light tracking-wide text-white/60 transition-colors hover:text-white/90 last:border-0"
                 onClick={() => setMenuOpen(false)}
               >
-                {l}
+                {label}
               </a>
             ))}
           </nav>
@@ -603,6 +732,112 @@ export default function NexusProPage() {
             </cite>
           </blockquote>
 
+        </div>
+
+        {/* Bottom divider */}
+        <div aria-hidden className="mx-auto mt-16 h-px max-w-xs md:mt-20 md:max-w-sm" style={{ background:'linear-gradient(90deg,transparent,rgba(200,168,100,0.28),transparent)' }} />
+      </section>
+
+      {/* ══ RITUAL GUIDE ════════════════════════════════════════════════ */}
+      <section
+        ref={ritualRef}
+        id="ritual-guide"
+        className="relative overflow-hidden bg-black px-5 py-20 md:py-28 md:px-12"
+        aria-label="Ritual Guide"
+      >
+        {/* Ambient glow */}
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background:'radial-gradient(ellipse at 50% 40%, rgba(138,170,120,0.07) 0%, rgba(200,168,100,0.03) 40%, transparent 68%)' }} />
+
+        {/* Top divider */}
+        <div aria-hidden className="mx-auto mb-14 h-px max-w-xs md:mb-16 md:max-w-sm" style={{ background:'linear-gradient(90deg,transparent,rgba(138,170,120,0.38),transparent)' }} />
+
+        {/* Section header */}
+        <div ref={ritualHeadRef} className="mx-auto mb-14 max-w-2xl text-center md:mb-18" style={{ opacity:0 }}>
+          <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.38em] md:text-[12px]" style={{ color:'#8aaa78' }}>
+            Ritual Guide
+          </p>
+          <h2 className="mb-4 font-cinzel font-bold leading-tight text-white" style={{ fontSize:'clamp(28px,5vw,56px)' }}>
+            The Perfect Cup
+          </h2>
+          <p className="text-[14px] font-light leading-relaxed text-white/38 md:text-[15px]">
+            Six simple steps to transform your daily tea into a mindful ritual.
+          </p>
+        </div>
+
+        {/* Steps grid */}
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-6 lg:gap-x-8">
+            {RITUAL_STEPS.map((step, i) => (
+              <div
+                key={step.num}
+                ref={el => { ritualCardRefs.current[i] = el }}
+                className="flex flex-col"
+                style={{ opacity:0 }}
+              >
+                {/* Visual area */}
+                <div
+                  className="relative mb-4 flex h-[140px] items-center justify-center overflow-hidden rounded-2xl"
+                  style={{ background:'linear-gradient(160deg,rgba(20,18,10,0.9) 0%,rgba(6,5,2,1) 100%)', border:'1px solid rgba(255,255,255,0.06)' }}
+                >
+                  {/* Step number badge */}
+                  <div
+                    className="absolute left-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-[12px] font-semibold text-black"
+                    style={{ background:'#8aaa78' }}
+                  >
+                    {step.num}
+                  </div>
+
+                  {/* Badge overlay (temp / time) */}
+                  {step.badge && (
+                    <div className="absolute right-3 top-3 text-right leading-tight">
+                      <p className="font-cinzel text-[11px] font-bold" style={{ color:'#c8a96e' }}>{step.badge.top}</p>
+                      <p className="text-[9px] font-light text-white/45">{step.badge.bot}</p>
+                    </div>
+                  )}
+
+                  {/* Optional badge */}
+                  {step.optional && (
+                    <p className="absolute right-3 top-3 text-[9px] font-medium uppercase tracking-[0.18em]" style={{ color:'#8aaa78' }}>
+                      Optional
+                    </p>
+                  )}
+
+                  {/* Icon */}
+                  <div className="h-16 w-16 text-white/30" style={{ color:'rgba(138,170,120,0.55)' }}>
+                    {step.icon}
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h3
+                  className="mb-2 whitespace-pre-line font-light italic leading-[1.25] text-white"
+                  style={{ fontSize:'clamp(15px,1.6vw,19px)', fontFamily:'Georgia, serif' }}
+                >
+                  {step.title}
+                </h3>
+
+                {/* Green rule */}
+                <div className="mb-3 h-px w-10" style={{ background:'linear-gradient(90deg,#8aaa78,transparent)' }} />
+
+                {/* Description */}
+                <p className="text-[12px] font-light leading-[1.75] text-white/40 md:text-[13px]">
+                  {step.desc}
+                </p>
+
+                {/* Bullet list (step 6) */}
+                {step.bullets && (
+                  <ul className="mt-2 space-y-1.5">
+                    {step.bullets.map(b => (
+                      <li key={b} className="flex items-start gap-2 text-[12px] font-light leading-[1.6] text-white/38">
+                        <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background:'#8aaa78' }} />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Bottom divider */}
